@@ -1,1 +1,95 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+}
+.galaxy-background {
+  background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  min-height: 100vh;
+  padding: 20px;
+  color: white;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Animated stars */
+.galaxy-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 90px 40px, #ddd, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
+  background-size: 200px 200px;
+  animation: stars 50s linear infinite;
+}
+
+/* Twinkling stars */
+.galaxy-background::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  animation: twinkle 5s ease-in-out infinite alternate;
+}
+
+@keyframes stars {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 200px 200px;
+  }
+}
+
+@keyframes twinkle {
+  0% {
+    box-shadow: 
+      50px 50px 1px 1px rgba(255,255,255,0.1),
+      100px 100px 1px 1px rgba(255,255,255,0.1),
+      150px 150px 1px 1px rgba(255,255,255,0.1);
+  }
+  100% {
+    box-shadow: 
+      50px 50px 3px 2px rgba(255,255,255,0.4),
+      100px 100px 3px 2px rgba(255,255,255,0.4),
+      150px 150px 3px 2px rgba(255,255,255,0.4);
+  }
+}
+
+/* Shooting star */
+@keyframes shoot {
+  0% {
+    transform: translateX(0) translateY(0) rotate(-45deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(1000px) translateY(-1000px) rotate(-45deg);
+    opacity: 0;
+  }
+}
+
+.shooting-star {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: linear-gradient(-45deg, rgba(255,255,255,0.8), rgba(0,0,255,0));
+  border-radius: 50%;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.8));
+  animation: shoot 10s linear infinite;
+}
