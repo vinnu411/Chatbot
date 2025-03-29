@@ -1,5 +1,5 @@
 
-// src/components/ChatInput.jsx
+
 import React from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';

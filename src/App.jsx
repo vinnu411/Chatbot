@@ -1,128 +1,169 @@
-import React, { useState } from 'react';
-import { Container, Typography, Box, TextField, Button } from '@mui/material';
+import React, { useState, useEffect, useRef } from 'react';
+import { Container, Typography, Box, TextField, Button, useMediaQuery } from '@mui/material';
 import { motion } from 'framer-motion';
 import "./App.css";
+import resume from './Data/resumeData';
+
 
 function App() {
+  // State and media queries
   const [messages, setMessages] = useState([
     { sender: 'bot', text: "Hello! I'm Vineeta. Ask me about my skills, experience, or education!" }
   ]);
   const [input, setInput] = useState('');
+  const isMobile = useMediaQuery('(max-width:768px)');
+  const messagesEndRef = useRef(null);
+  const containerRef = useRef(null);
 
-  // Generate multiple shooting stars
-  const shootingStars = Array.from({ length: 3 }).map((_, index) => (
-    <div 
-      key={index}
-      className="shooting-star" 
-      style={{
-        top: `${Math.random() * 100}%`,
-        left: `${Math.random() * 100}%`,
-        animationDelay: `${Math.random() * 10}s`,
-        animationDuration: `${5 + Math.random() * 10}s`
-      }} 
-    />
+  // Auto-scroll to newest message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Generate shooting stars
+  const shootingStars = Array.from({ length: isMobile ? 5 : 10 }).map((_, i) => (
+    <div key={i} className="shooting-star" style={{
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      animationDelay: `${Math.random() * 5}s`,
+      animationDuration: `${2 + Math.random() * 3}s`
+    }} />
   ));
 
+  // Handle user messages
   const handleSend = () => {
     if (!input.trim()) return;
-
-    const newMessages = [...messages, { sender: 'user', text: input }];
-    setMessages(newMessages);
-
+    
     const userInput = input.toLowerCase().trim();
-    let botResponse = 'I\'m not sure what you mean. Try asking about my bio, work experience, or skills!';
-
-    if (userInput.includes('bio') || userInput.includes('about')) {
-      botResponse = resume.bio;
-    } else if (userInput.includes('work') || userInput.includes('job') || userInput.includes('experience')) {
-      botResponse = 'My work experience includes:\n' +
-        Object.values(resume.jobs)
-          .map((job) => ` • ${job.role} at ${job.company} (${job.dates})`)
-          .join('\n');
-    } else if (userInput.includes('skill')) {
-      botResponse = `My technical skills include: ${resume.skills.join(', ')}`;
-    } else if (userInput.includes('hi') || userInput.includes('hello')) {
-      botResponse = 'Hi there! What would you like to know about me?';
-    }
-
-    setMessages([...newMessages, { sender: 'bot', text: botResponse }]);
+    let response = generateResponse(userInput);
+    
+    setMessages(prev => [...prev, 
+      { sender: 'user', text: input },
+      { sender: 'bot', text: response }
+    ]);
     setInput('');
   };
 
+  // Generate bot responses
+  const generateResponse = (input) => {
+    if (input.includes('bio') || input.includes('about')) return resume.bio;
+    if (input.includes('work') || input.includes('job') || input.includes('experience')) 
+      return formatExperience();
+    if (input.includes('skill')) return `My technical skills: ${resume.skills.join(', ')}`;
+    if (input.includes('hi') || input.includes('hello')) return 'Hello! What would you like to know?';
+    if (input.includes('hobbies')) return `My hobbies: ${resume.hobbies.join(', ')}`;
+    if (input.includes('education')) return `Education: ${resume.education.join(', ')}`;
+    if (input.includes('bye')) return 'Thank you! Good luck with your search!';
+    
+    return "I can discuss my skills, experience, education, or hobbies. What would you like to know?";
+  };
+
+  // Format experience section
+  const formatExperience = () => {
+    return `My Professional Experience:\n${Object.values(resume.jobs)
+      .map(job => `• ${job.role} @ ${job.company} (${job.dates})\n   ${job.description || ''}`)
+      .join('\n')}`;
+  };
+  
   return (
-    <div className="galaxy-background">
-      {/* Shooting stars background elements */}
+    <div className="interactive-resume">
       {shootingStars}
       
-      <Container maxWidth="md" sx={{ 
-        py: 4, 
-        position: 'relative', 
-        zIndex: 1,
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
-        <Typography 
-          variant="h4" 
-          align="center" 
-          gutterBottom
-          sx={{
-            fontFamily: 'Orbitron, sans-serif',
-            color: '#4fc3f7',
-            textShadow: '0 0 8px rgba(79, 195, 247, 0.7)',
-            mb: 4
-          }}
-        >
-          👋 Welcome to My Interactive Resume
-        </Typography>
-        
-        <motion.div 
-          className="chat-box"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
+      <Container 
+        maxWidth="md" // Changed to md for smaller width
+        ref={containerRef}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          padding: isMobile ? 1 : 4,
+          margin: '0 auto',
+          position: 'relative',
+          maxWidth: '500px',
+          width: '70%',
+          height: 'auto',
+          minHeight: '100vh'
+        }}
+      >
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            backgroundColor: 'rgba(16, 20, 30, 0.8)',
-            borderRadius: '12px',
-            padding: '24px',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-            overflow: 'hidden'
-          }}
         >
-          <Box sx={{ flex: 1, overflowY: 'auto', mb: 2 }}>
-            {messages.map((message, index) => (
+          <Typography variant="h3" sx={{
+            textAlign: 'center',
+            color: '#4fc3f7',
+            mb: 3,
+            fontSize: isMobile ? '1.8rem' : '2.5rem',
+            fontWeight: 600,
+            textShadow: '0 0 10px rgba(79, 195, 247, 0.7)'
+          }}>
+            Vineeta's Interactive Resume
+          </Typography>
+        </motion.div>
+
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          border: '2px solid #3ba5d8',
+          borderRadius: '16px',
+          p: 3,
+          backgroundColor: 'rgba(16, 20, 30, 0.85)',
+          boxShadow: '0 0 20px rgba(59, 165, 216, 0.3)',
+          overflow: 'hidden',
+          width: '100%',
+          maxWidth: '700px',
+          margin: '0 auto',
+          height: 'auto',
+          maxHeight: '80vh',
+          minHeight: '200px'
+        }}>
+          {/* Messages container - now with dynamic height */}
+          <Box sx={{
+            flex: '1 1 auto',
+            overflowY: 'auto',
+            mb: 2,
+            pr: 1,
+            minHeight: '100px'
+          }}>
+            {messages.map((msg, i) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                style={{
-                  alignSelf: message.sender === 'user' ? 'flex-end' : 'flex-start',
-                  backgroundColor: message.sender === 'user' ? '#4fc3f7' : '#2d3748',
-                  color: message.sender === 'user' ? '#000' : '#fff',
-                  padding: '12px 16px',
-                  borderRadius: message.sender === 'user' ? '18px 18px 0 18px' : '18px 18px 18px 0',
-                  maxWidth: '70%',
-                  marginBottom: '12px',
-                  whiteSpace: 'pre-line'
-                }}
               >
-                {message.text}
+                <Box sx={{
+                  alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                  bgcolor: msg.sender === 'user' ? '#4fc3f7' : '#2d3748',
+                  color: msg.sender === 'user' ? '#000' : '#fff',
+                  p: 2,
+                  borderRadius: '12px',
+                  maxWidth: '90%',
+                  mb: 2,
+                  whiteSpace: 'pre-line',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                }}>
+                  {msg.text}
+                </Box>
               </motion.div>
             ))}
+            <div ref={messagesEndRef} />
           </Box>
-          
-          <Box sx={{ display: 'flex', gap: 2 }}>
+
+          {/* Input area - fixed at bottom */}
+          <Box sx={{ 
+            flex: '0 0 auto',
+            display: 'flex', 
+            gap: 1.5,
+            pt: 2,
+            borderTop: '1px solid rgba(79, 195, 247, 0.2)'
+          }}>
             <TextField
               fullWidth
-              variant="outlined"
-              placeholder="Ask about my skills, experience..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              placeholder="Ask about my skills, experience, or education..."
               sx={{
                 '& .MuiOutlinedInput-root': {
                   color: '#fff',
@@ -132,18 +173,20 @@ function App() {
               }}
             />
             <Button 
-              variant="contained" 
+              variant="contained"
               onClick={handleSend}
               sx={{
                 bgcolor: '#4fc3f7',
                 color: '#000',
+                minWidth: '100px',
+                fontWeight: 600,
                 '&:hover': { bgcolor: '#3ba5d8' }
               }}
             >
               Send
             </Button>
           </Box>
-        </motion.div>
+        </Box>
       </Container>
     </div>
   );
