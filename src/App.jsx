@@ -53,7 +53,10 @@ function App() {
     if (input.includes('hi') || input.includes('hello')) return 'Hello! What would you like to know?';
     if (input.includes('hobbies')) return `My hobbies: ${resume.hobbies.join(', ')}`;
     if (input.includes('education')) return `Education: ${resume.education.join(', ')}`;
-    if (input.includes('bye')) return 'Thank you! Good luck with your search!';
+    if(input.includes('contact'))return`lets connect: ${resume.contact.join(`,`)}`;
+    if(input.includes('projects')) return `My projects: ${resume.projects}`;
+    if(input.includes('tools')) return `My projects: ${resume.tools}`;
+    if (input.includes('bye')) return 'Bye have a nice day 👋';
     
     return "I can discuss my skills, experience, education, or hobbies. What would you like to know?";
   };
@@ -97,7 +100,7 @@ function App() {
             fontWeight: 600,
             textShadow: '0 0 10px rgba(79, 195, 247, 0.7)'
           }}>
-            Vineeta's Interactive Resume
+            Wanna Know about me?? 🙌
           </Typography>
         </motion.div>
 
