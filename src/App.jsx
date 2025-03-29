@@ -54,8 +54,10 @@ function App() {
     if (input.includes('hobbies')) return `My hobbies: ${resume.hobbies.join(', ')}`;
     if (input.includes('education')) return `Education: ${resume.education.join(', ')}`;
     if(input.includes('contact'))return`lets connect: ${resume.contact.join(`,`)}`;
-    if(input.includes('projects')) return `My projects: ${resume.projects}`;
-    if(input.includes('tools')) return `My projects: ${resume.tools}`;
+    if (input.includes('project')) {
+      return `My project:\n${resume.project.map(proj => `${proj.name}: ${proj.link}`).join('\n')}`;
+    }
+    if(input.includes('tool')) return `My tools: ${resume.tool.join(`,`)}`;
     if (input.includes('bye')) return 'Bye have a nice day 👋';
     
     return "I can discuss my skills, experience, education, or hobbies. What would you like to know?";
