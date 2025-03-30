@@ -48,16 +48,17 @@ function App() {
   const generateResponse = (input) => {
     if (input.includes('bio') || input.includes('about')) return resume.bio;
     if (input.includes('work') || input.includes('job') || input.includes('experience')) 
-      return formatExperience();
-    if (input.includes('skill')) return `My technical skills: ${resume.skills.join(', ')}`;
+    return formatExperience();
+    if (input.includes('skills') || input.includes('skill'))return formatskills();
+    
     if (input.includes('hi') || input.includes('hello')) return 'Hello! What would you like to know?';
     if (input.includes('hobbies')) return `My hobbies: ${resume.hobbies.join(', ')}`;
     if (input.includes('education')) return `Education: ${resume.education.join(', ')}`;
-    if(input.includes('contact'))return`lets connect: ${resume.contact.join(`,`)}`;
-    if (input.includes('project')) {
-      return `My project:\n${resume.project.map(proj => `${proj.name}: ${proj.link}`).join('\n')}`;
-    }
-    if(input.includes('tool')) return `My tools: ${resume.tool.join(`,`)}`;
+
+    if (input.includes('contact')) return formatContact();
+    if (input.includes('project'))return formatProjects();
+
+   
     if (input.includes('bye')) return 'Bye have a nice day 👋';
     
     return "I can discuss my skills, experience, education, or hobbies. What would you like to know?";
@@ -69,6 +70,27 @@ function App() {
       .map(job => `• ${job.role} @ ${job.company} (${job.dates})\n   ${job.description || ''}`)
       .join('\n')}`;
   };
+  // Format projects section
+  const formatProjects = () => {
+   return `My Projects:\n${Object.values(resume.project)  
+    .map(project => `• ${project.name} -> ${project.description}   `)
+   
+    .join('\n')}`;
+  };
+  const formatContact = () => {
+    return `Connect with me:\n${Object.values(resume.contact)
+      .map(contact => `📧 ${contact.email}\n 🔗${contact.linkedin}\n  💻${contact.github}  `)
+     
+      .join('\n')}`;
+
+  }
+  const formatskills = () => {
+    return `My Skills:\n${Object.values(resume.skills)
+      .map(skill => `🖥️ ${skill.front}\n  ⚙️${skill.back}\n 🗃️${skill.data}\n  🛠️${skill.tools}`)
+      .join('\n')}`;
+  }
+
+  
   
   return (
     <div className="interactive-resume">
