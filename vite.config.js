@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   
   // Add these critical configurations:
-  base: './', // Relative paths for GitHub Pages
+  base: '/Chatbot/', // Relative paths for GitHub Pages
   build: {
     outDir: 'dist',
     emptyOutDir: true,
